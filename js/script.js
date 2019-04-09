@@ -74,11 +74,11 @@ switcher.addEventListener('change', () =>{
 
 const data = [
     ['img/thumb_3.webp', 'img/thumb_4.webp', 'img/thumb_5.webp'],
-    ['W3 Верстка на flexbox CSS | Блок преимущества и галерея | Марафон верстки | Артем Исламов',
+    ['Nightcore - So Am I',
         '#2 Установка spikmi и робота с ветками на Github | Мафарон верстки Урок 2',
         '#1 Верстка реального заказа landing Page | Марафон верстки | Артем Исламов'],
-    ['3.6 тыс просмотров', '4.2 тыс просмотров', '28 тыс просмотров'],
-    ['X9SmcY3lM-U', '7BvHoh0BrMw', 'mC8JW_aG2EM']
+    ['2 343 349 переглядів', '4.2 тыс просмотров', '28 тыс просмотров'],
+    ['RiOBzkAO-pc&list=RDRiOBzkAO-pc&start_radio=1', '7BvHoh0BrMw', 'mC8JW_aG2EM']
 ];
 
 more.addEventListener("click", () =>{
