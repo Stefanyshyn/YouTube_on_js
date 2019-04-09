@@ -78,7 +78,7 @@ const data = [
         '#2 Установка spikmi и робота с ветками на Github | Мафарон верстки Урок 2',
         '#1 Верстка реального заказа landing Page | Марафон верстки | Артем Исламов'],
     ['3.6 тыс просмотров', '4.2 тыс просмотров', '28 тыс просмотров'],
-    ['X9SmcY3LM-U', '7BvHoh0BrMw', 'mC8JW_aG2EM']
+    ['X9SmcY3lM-U', '7BvHoh0BrMw', 'mC8JW_aG2EM']
 ];
 
 more.addEventListener("click", () =>{
@@ -104,6 +104,7 @@ more.addEventListener("click", () =>{
         }, 10);
         bindNewModal(card);
     }
+
     bindModal(document.querySelectorAll('.videos__item'));
 
     if (night === true) {
