@@ -3,6 +3,7 @@ const switcher = document.querySelector('#cbx'),
     modal = document.querySelector('.modal'),
     videos = document.querySelectorAll('.videos__item');
 let player;
+const videosWrapper = document.querySelector('.videos__wrapper');
 
 
 function bindSliderToggle(trigger, boxBody, content, openClass){
@@ -71,7 +72,7 @@ let night = false;
 switcher.addEventListener('change', () =>{
     switchMode();
 })
-
+/*
 const data = [
     ['img/thumb_3.webp', 'img/thumb_4.webp', 'img/thumb_5.webp'],
     ['Nightcore - So Am I',
@@ -80,7 +81,8 @@ const data = [
     ['2 343 349 переглядів', '4.2 тыс просмотров', '28 тыс просмотров'],
     ['EKLWC93nvAU', '7BvHoh0BrMw', 'mC8JW_aG2EM']
 ];
-
+*/
+/*
 more.addEventListener("click", () =>{
     const videosWrapper = document.querySelector('.videos__wrapper');
     more.remove();
@@ -103,20 +105,133 @@ more.addEventListener("click", () =>{
             card.classList.remove('videos__item-active');
         }, 10);
         bindNewModal(card);
+
+        if (night === true) {
+            card.querySelector('.videos__item-descr').style.color = '#fff';
+            card.querySelector('.videos__item-views').style.color = '#fff';
+        }    
     }
 
     bindModal(document.querySelectorAll('.videos__item'));
-
-    if (night === true) {
-        document.querySelectorAll('.videos__item-descr').forEach(item => {
-            item.style.color = '#fff';
-        });
-        document.querySelectorAll('.videos__item-views').forEach(item => {
-            item.style.color = '#fff';
-        });
-    }
     sliceTitle('.videos__item-descr', 50);
 });
+*/
+
+function start(){
+    gapi.client.init(
+        {
+            'apiKey': 'AIzaSyCo8462XctGHxPyEckhAgqq-QgTPjywWNA',
+            'discoveryDocs': ["https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest"]
+        }
+    ).then(function(){
+        return gapi.client.youtube.playlistItems.list(
+            {
+                "part": "snippet,contentDetails",
+                "maxResults": '6',
+                'playlistId':"PL3LQJkGQtzc4gsrFkm4MjWhTXhopsMgpv"
+            }
+        );
+    }).then(function(response){
+        console.log(response.result);
+        
+        response.result.items.forEach(item => {
+            let card = document.createElement('a');
+            card.classList.add('videos__item', 'videos__item-active');
+            card.setAttribute('data-url', item.contentDetails.videoId);
+            card.innerHTML = `
+            <img src="${item.snippet.thumbnails.high.url}" alt="thumb">
+            <div class="videos__item-descr">
+                ${item.snippet.title}
+            </div>
+            <div class="videos__item-views">
+                2.7 тис. просмотров
+            </div>
+            `;
+            videosWrapper.appendChild(card);
+            setTimeout( () => {
+                card.classList.remove('videos__item-active');
+            }, 10);
+         
+            if (night === true) {
+                card.querySelector('.videos__item-descr').style.color = '#fff';
+                card.querySelector('.videos__item-views').style.color = '#fff';
+            }
+
+        });
+
+        sliceTitle('.videos__item-descr', 50);
+        bindModal(document.querySelectorAll('.videos__item'));
+
+    }).catch(e => {
+        console.log(e);
+    })
+}
+
+more.addEventListener('click', () =>{
+    more.remove();
+    gapi.load('client', start);
+});
+
+function search(target){
+    gapi.client.init(
+        {
+            'apiKey': 'AIzaSyCo8462XctGHxPyEckhAgqq-QgTPjywWNA',
+            'discoveryDocs': ["https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest"]
+        }
+    ).then(function(){
+        return gapi.client.youtube.search.list(
+            {
+                'maxResults': '10',
+                'part': 'snippet',
+                'q': `${target}`,
+                'type': '' 
+            }
+        )
+   }).then(function(response){
+        console.log(response.result);
+        // videosWrapper.innerHTML = "";
+        while(videosWrapper.firstChild){
+            videosWrapper.removeChild(videosWrapper.firstChild);
+        }
+        response.result.items.forEach(item => {
+            let card = document.createElement('a');
+            card.classList.add('videos__item', 'videos__item-active');
+            card.setAttribute('data-url', item.id.videoId);
+            card.innerHTML = `
+            <img src="${item.snippet.thumbnails.high.url}" alt="thumb">
+            <div class="videos__item-descr">
+                ${item.snippet.title}
+            </div>
+            <div class="videos__item-views">
+                2.7 тис. просмотров
+            </div>
+            `;
+            videosWrapper.appendChild(card);
+            setTimeout( () => {
+                card.classList.remove('videos__item-active');
+            }, 10);
+         
+            if (night === true) {
+                card.querySelector('.videos__item-descr').style.color = '#fff';
+                card.querySelector('.videos__item-views').style.color = '#fff';
+            }
+
+        });
+
+        sliceTitle('.videos__item-descr', 50);
+        bindModal(document.querySelectorAll('.videos__item'));
+
+    })
+}
+
+document.querySelector('.search').addEventListener('submit', (e) => {
+    e.preventDefault();
+    gapi.load('client', () => {
+        search(document.querySelector('.search > input').value);
+        document.querySelector('.search > input').value = "";
+    });
+
+})
 
 function sliceTitle(selector, count){
     document.querySelectorAll(selector).forEach(item => {
@@ -153,7 +268,6 @@ function bindModal(cards){
          });
     })
 }
-bindModal(videos);
 
 function bindNewModal(card) {
     card.addEventListener('click', (e) => {
@@ -167,7 +281,11 @@ modal.addEventListener('click', (e) => {
         closeModal();
     }
 })
-
+document.addEventListener('keydown', (e) => {
+    if(e.keyCode === 27){
+        closeModal();
+    }   
+})
 function createVideo(){
     // 1. Цей код завантажує код API IFrame Player асинхронно
     var tag = document.createElement('script');
